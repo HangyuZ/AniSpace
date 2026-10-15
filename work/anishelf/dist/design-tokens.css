@@ -1,0 +1,68 @@
+/* Fluent semantic tokens. Controlled web tint, not native desktop Mica. */
+:root {
+ color-scheme:light;
+ --ui-canvas:#f3f5f8; --ui-surface:#ffffff; --ui-surface-secondary:#e9edf3;
+ --ui-text:#202733; --ui-text-secondary:#4c586a; --ui-text-tertiary:#566275;
+ --ui-separator:#c8d0dc; --ui-accent:#244A81; --ui-accent-hover:#17375E; --ui-accent-pressed:#102b4d; --ui-on-accent:#ffffff; --ui-accent-soft:#e1eaf7;
+ --ui-danger:#a4262c; --ui-danger-soft:#fbe9eb; --ui-rating:#806215;
+ --ui-disabled-text:#657084; --ui-disabled-fill:#e7ebf1;
+ --ui-control-hover:#f0f3f8; --ui-control-pressed:#e3e8f0; --ui-selected-hover:#d7e4f6; --ui-selected-pressed:#cbdcf3;
+ --ui-focus-ring:#244A81; --ui-focus-offset:2px;
+ --material-sidebar:#e9edf3; --material-bar:#f3f5f8; --material-control:#ffffff;
+ --toolbar-fade-color:243,245,248;
+ --material-sheet:rgba(250,252,255,.90); --material-protected:#ffffff; --material-border:#c8d0dc;
+ --frost-control:rgba(255,255,255,.84); --frost-field:rgba(255,255,255,.97);
+ --frost-panel:rgba(233,237,243,.9); --frost-navigation:rgba(255,255,255,.26);
+ --frost-accent:rgba(36,74,129,.88); --frost-media:rgba(16,29,48,.8);
+ --frost-toolbar-control:rgba(255,255,255,.72); --frost-toolbar-panel:rgba(233,237,243,.78);
+ --frost-small-filter:blur(10px) saturate(105%); --frost-flyout-filter:blur(20px) saturate(105%);
+ --frost-drawer-filter:blur(20px) saturate(105%);
+ --frost-control-shadow:0 2px 7px rgba(16,29,48,.10);
+ --material-scrim:rgba(0,0,0,.32); --material-shadow-color:rgba(16,29,48,.13);
+ --material-control-shadow:0 1px 2px rgba(16,29,48,.06);
+ --material-toolbar-shadow:0 4px 16px rgba(16,29,48,.12);
+ --material-sheet-shadow:0 16px 48px rgba(16,29,48,.22);
+ --radius-control:4px; --radius-field:4px; --radius-panel:8px; --radius-sheet:8px; --radius-badge:2px;
+ --calendar-0:#e9edf3; --calendar-1:#e0ebf8; --calendar-2:#c5d8f1; --calendar-3:#9fbde4; --calendar-4:#396395; --calendar-5:#244a81;
+ --calendar-high-text:#ffffff;
+ --motion-fast:100ms; --motion-standard:180ms; --motion-ease:cubic-bezier(.1,.9,.2,1);
+ --motion-detail-enter:260ms; --motion-detail-exit:180ms;
+ --motion-menu:160ms; --motion-menu-shift:6px;
+ --sidebar-expanded-width:238px; --sidebar-collapsed-width:72px; --sidebar-width:var(--sidebar-expanded-width);
+ --status-watching-ink:#2f6347; --status-watching-fill:#e6efe9; --status-watching-bar:#52745d;
+ --status-planned-ink:#505b68; --status-planned-fill:#e8ebef; --status-planned-bar:#6c7888;
+ --status-completed-ink:#244a81; --status-completed-fill:#e1eaf7; --status-completed-bar:#4c6c96;
+ --status-paused-ink:#6b521d; --status-paused-fill:#f2ecd9; --status-paused-bar:#a28a49;
+ --status-dropped-ink:#8c4549; --status-dropped-fill:#f5e7e8; --status-dropped-bar:#a2696e;
+ --progress-highlight:#ffffff; --progress-highlight-amount:26%;
+ --bg:var(--ui-canvas); --panel:var(--ui-surface-secondary); --surface:var(--ui-surface);
+ --text:var(--ui-text); --muted:var(--ui-text-secondary); --line:var(--ui-separator); --accent:var(--ui-accent); --glass:var(--ui-surface);
+}
+body.dark {
+ color-scheme:dark;
+ --ui-canvas:#1b2330; --ui-surface:#242f40; --ui-surface-secondary:#2d3b50;
+ --ui-text:#f1f5fc; --ui-text-secondary:#c3cfe0; --ui-text-tertiary:#b6c4d8;
+ --ui-separator:#4b5c74; --ui-accent:#91B8F5; --ui-accent-hover:#B1CDF8; --ui-accent-pressed:#7ba5e5; --ui-on-accent:#142034; --ui-accent-soft:#304564;
+ --ui-danger:#ffb5bd; --ui-danger-soft:#50333f; --ui-rating:#e5c98d;
+ --ui-disabled-text:#a0aec3; --ui-disabled-fill:#2b3545;
+ --ui-control-hover:#334259; --ui-control-pressed:#3b4d68; --ui-selected-hover:#334969; --ui-selected-pressed:#293e5b; --ui-focus-ring:#91B8F5;
+ --material-sidebar:#202b3c; --material-bar:#202b3c; --material-control:#2d3b50;
+ --toolbar-fade-color:32,43,60;
+ --material-sheet:rgba(36,47,64,.90); --material-protected:#242f40; --material-border:#4b5c74;
+ --frost-control:rgba(45,59,80,.94); --frost-field:rgba(45,59,80,.97);
+ --frost-panel:rgba(45,59,80,.94); --frost-navigation:rgba(45,59,80,.36);
+ --frost-accent:rgba(145,184,245,.88); --frost-media:rgba(16,29,48,.86);
+ --frost-toolbar-control:rgba(45,59,80,.8); --frost-toolbar-panel:rgba(45,59,80,.8);
+ --frost-control-shadow:0 2px 7px rgba(0,0,0,.24);
+ --material-shadow-color:rgba(0,0,0,.28);
+ --material-control-shadow:0 1px 2px rgba(0,0,0,.12);
+ --material-toolbar-shadow:0 4px 16px rgba(0,0,0,.24);
+ --material-sheet-shadow:0 16px 48px rgba(0,0,0,.4);
+ --calendar-0:#202b3c; --calendar-1:#202f44; --calendar-2:#233750; --calendar-3:#263f5e; --calendar-4:#28476f; --calendar-5:#234b80;
+ --calendar-high-text:#f1f5fc;
+ --status-watching-ink:#a4c4ad; --status-watching-fill:#25352d; --status-watching-bar:#466450;
+ --status-planned-ink:#c1cad5; --status-planned-fill:#29303a; --status-planned-bar:#596474;
+ --status-completed-ink:#91b8f5; --status-completed-fill:#26364b; --status-completed-bar:#3d5d85;
+ --status-paused-ink:#d2bd82; --status-paused-fill:#383223; --status-paused-bar:#806d3c;
+ --status-dropped-ink:#d8a6aa; --status-dropped-fill:#3b2a30; --status-dropped-bar:#87585e;
+}

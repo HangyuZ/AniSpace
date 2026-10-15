@@ -1,0 +1,42 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync('dist/personalization.js','utf8'),css=fs.readFileSync('dist/personalization.css','utf8');
+function boot(storage=new Map(),dark=false){
+ const props=new Map(),attrs=new Set(),nodes=new Map(),messages=[];let section,fail=false;
+ function el(id){if(!nodes.has(id))nodes.set(id,{id,value:'',textContent:'',dataset:{},click(){},files:[]});return nodes.get(id)}
+ const body={style:{setProperty:(k,v)=>props.set(k,v),removeProperty:k=>props.delete(k)},classList:{contains:()=>dark},toggleAttribute:(k,on)=>on?attrs.add(k):attrs.delete(k)};
+ const root={console,URL,Image:class{},I18n:{getLanguage:()=>root.language||'zh-CN'},document:{body,createElement:()=>{section={innerHTML:'',querySelector:s=>el(s.slice(1)),querySelectorAll:s=>{if(s==='[data-person-tier]')return ['page','sidebar','control','flyout','drawer'].flatMap(tier=>['blur','opacity'].map(type=>{const node=el('personal-'+tier+'-'+type);node.dataset={personTier:tier,personType:type};return node}));if(s==='[data-person-reset]')return ['background','accent','page','sidebar','control','flyout','drawer'].map(key=>{const node=el('reset-'+key);node.dataset.personReset=key;return node});return []}};return section}},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>{if(fail)throw Error('QuotaExceededError');storage.set(k,v)}},toast:s=>messages.push(s),renderSettings(){},$:()=>({append(){}})};
+ root.AppStorage=root.localStorage;vm.createContext(root);vm.runInContext(source,root);return {run:s=>vm.runInContext(s,root),nodes,props,attrs,storage,messages,setDark:v=>{dark=v},fail:v=>{fail=v},render:()=>{root.renderSettings();return section},root};
+}
+const h=boot(new Map([['anishelf-library-v1','unchanged library']]));
+assert.deepEqual(JSON.parse(h.run('JSON.stringify(Personalization.get())')),{});
+assert.equal(h.attrs.size,0);const panel=h.render();assert.match(panel.innerHTML,/控件与工具栏/);assert.match(panel.innerHTML,/动漫详情底板/);
+assert.match(panel.innerHTML,/主页面背景层/);assert.equal(h.nodes.get('personal-page-blur').value,16);assert.equal(h.nodes.get('personal-page-opacity').value,85);
+assert.ok(panel.innerHTML.includes('aria-labelledby="personal-sidebar-title"><h4 id="personal-sidebar-title">侧边栏</h4>'));
+assert.doesNotMatch(panel.innerHTML,/<legend>/);
+assert.equal(h.nodes.get('personal-sidebar-blur').value,16);assert.equal(h.nodes.get('personal-sidebar-opacity').value,80);
+h.nodes.get('personal-sidebar-blur').value='24';h.nodes.get('personal-sidebar-blur').oninput();
+assert.equal(h.props.get('--personal-sidebar-blur'),'24px');assert.equal(h.storage.has('anishelf-personalization-v1'),false);
+h.nodes.get('personal-sidebar-blur').onchange();
+assert.equal(boot(h.storage).run('Personalization.get().sidebar.blur'),24);
+assert.equal(h.attrs.has('data-person-page'),false);assert.equal(h.attrs.has('data-person-control'),false);
+h.run("Personalization.reset('sidebar')");assert.equal(h.attrs.has('data-person-sidebar'),false);h.storage.delete('anishelf-personalization-v1');
+h.nodes.get('personal-page-blur').value='22';h.nodes.get('personal-page-blur').oninput();assert.equal(h.props.get('--personal-page-blur'),'22px');assert.equal(h.storage.has('anishelf-personalization-v1'),false);h.nodes.get('personal-page-blur').onchange();
+h.nodes.get('personal-page-opacity').value='77';h.nodes.get('personal-page-opacity').oninput();h.nodes.get('personal-page-opacity').onchange();assert.equal(h.props.get('--personal-page-alpha'),.77);assert.equal(boot(h.storage).run('Personalization.get().page.opacity'),77);assert.equal(h.attrs.has('data-person-control'),false);h.run("Personalization.reset('page')");assert.equal(h.attrs.has('data-person-page'),false);assert.equal(h.run('Personalization.get().page'),undefined);h.storage.delete('anishelf-personalization-v1');
+h.nodes.get('personal-control-blur').value='25';h.nodes.get('personal-control-blur').oninput();assert.equal(h.props.get('--personal-control-blur'),'25px');assert.equal(h.storage.has('anishelf-personalization-v1'),false,'slider preview must not write a background on every frame');h.nodes.get('personal-control-blur').onchange();
+assert.equal(JSON.parse(h.storage.get('anishelf-personalization-v1')).control.blur,25);assert.equal(h.attrs.has('data-person-flyout'),false);assert.equal(h.attrs.has('data-person-drawer'),false);
+h.nodes.get('personalAccent').oninput({target:{value:'#ff0000'}});h.nodes.get('personalAccent').onchange();assert.equal(h.attrs.has('data-person-accent'),true);const lightColor=h.props.get('--personal-accent');h.setDark(true);h.run('Personalization.apply()');assert.notEqual(h.props.get('--personal-accent'),lightColor);
+assert.equal([...h.props.keys()].some(k=>k.includes('status-')||k.includes('calendar-')),false);
+const stored=h.storage.get('anishelf-personalization-v1');const reload=boot(h.storage,true);assert.equal(reload.props.get('--personal-control-blur'),'25px');assert.equal(reload.run('Personalization.get().accent'),'#ff0000');
+h.fail(true);assert.equal(h.run("Personalization.save({accent:'#00ff00'})"),false);assert.equal(h.run('Personalization.get().accent'),'#ff0000');assert.equal(h.storage.get('anishelf-personalization-v1'),stored);assert.equal(h.messages.length,1);h.fail(false);
+assert.equal(h.run("Personalization.save({...Personalization.get(),background:'data:image/jpeg;base64,YQ=='})"),true);assert.match(h.props.get('--personal-background'),/^url\("data:image/);h.run("Personalization.reset('background')");assert.equal(h.props.has('--personal-background'),false);
+h.run("Personalization.reset('control')");assert.equal(h.attrs.has('data-person-control'),false);assert.equal(h.attrs.has('data-person-accent'),true);
+h.run('Personalization.reset()');assert.equal(h.attrs.size,0);assert.equal(h.storage.get('anishelf-library-v1'),'unchanged library');
+const malformed=boot(new Map([['anishelf-personalization-v1',JSON.stringify({accent:'red;--status-watching-fill:pink',background:'https://example.com/image.svg',control:{blur:Infinity,opacity:-2},flyout:{blur:999,opacity:999}})]]));assert.equal(malformed.attrs.has('data-person-accent'),false);assert.equal(malformed.attrs.has('data-person-background'),false);assert.equal(malformed.run('Personalization.get().control.opacity'),40);assert.equal(malformed.run('Personalization.get().flyout.blur'),30);
+const badJSON=boot(new Map([['anishelf-personalization-v1','{bad']]));assert.equal(badJSON.attrs.size,0);
+function rgb(hex){return [1,3,5].map(i=>parseInt(hex.slice(i,i+2),16))}function lum(c){return c.map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0)}function ratio(a,b){a=lum(rgb(a));b=lum(rgb(b));return (Math.max(a,b)+.05)/(Math.min(a,b)+.05)}
+for(const color of ['#000000','#ffffff','#ffff00','#ff0000','#00ff00','#0000ff','#244a81','#91b8f5'])for(const dark of [false,true]){const p=JSON.parse(h.run('JSON.stringify(Personalization.palette('+JSON.stringify(color)+','+dark+'))'));for(const bg of [p.accent,p.hover,p.pressed])assert.ok(ratio(p.on,bg)>=4.5,`${color}, ${dark}: button contrast`);for(const bg of [p.soft,p.selectedHover,p.selectedPressed])assert.ok(ratio(p.accent,bg)>=4.5,`${color}, ${dark}: selected contrast ${ratio(p.accent,bg)}`)}
+h.root.language='en-US';assert.match(h.render().innerHTML,/Main page backdrop/);assert.match(h.render().innerHTML,/Controls and toolbars/);assert.doesNotMatch(h.render().innerHTML,/个性化/);
+assert.ok(css.includes('(prefers-reduced-transparency:reduce)'));assert.ok(css.includes('(forced-colors:active)'));assert.ok(css.includes('--frost-small-filter:none'));assert.ok(css.includes('background-image:none'));assert.ok(!/--status-|--calendar-/.test(css));
+assert.match(css,/\.app::before[^}]*position:fixed;[^}]*z-index:-1;[^}]*pointer-events:none/);assert.match(css,/backdrop-filter:blur\(var\(--page-glass-blur\)\)/);assert.match(css,/prefers-reduced-motion:reduce/);assert.ok(!/\.app\s*\{[^}]*backdrop-filter/.test(css),'foreground must not become a backdrop root');
+const html=fs.readFileSync('../../outputs/AniShelf.html','utf8');assert.ok(html.includes(source));assert.ok(!/<script src=|<link rel="stylesheet"/.test(html));
+console.log('PASS: settings controls, live preview and commit, persistence/reload, independent material tiers, theme adaptation, bounded safe inputs, storage failure rollback, scoped/all reset, bilingual labels, semantic colors unchanged and accent contrast >=4.5:1. Mock DOM; real browser rendering/image decoding not tested.');

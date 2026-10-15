@@ -1,0 +1,27 @@
+/* Settings are grouped with whitespace and dividers, without extra glass layers. */
+.settings-jump-nav { display:flex; flex-wrap:wrap; gap:8px 16px; padding:0 0 20px; border-bottom:1px solid var(--ui-separator); }
+.settings-jump-nav a { color:var(--ui-accent); font-size:13px; line-height:1.6; text-decoration:none; padding:4px 0; }
+.settings-jump-nav a:hover { text-decoration:underline; text-underline-offset:4px; }
+.settings-jump-nav a:active { color:var(--ui-accent-pressed); }
+.settings-group { padding:28px 0 12px; border-bottom:1px solid var(--ui-separator); scroll-margin-top:100px; min-width:0; }
+.settings-group:last-child { border-bottom:0; }
+.settings-group>h2 { margin:0 0 20px; font-size:20px; line-height:1.4; font-weight:600; color:var(--ui-text); }
+.settings-group>h2:focus-visible,.settings-jump-nav a:focus-visible { outline:2px solid var(--ui-focus-ring); outline-offset:4px; border-radius:var(--radius-control); }
+.settings-group>:is(.profile-settings,.personalization-settings,.season-settings,.folder-storage-settings,.discover-settings) { margin-top:0; padding-top:0; border-top:0; }
+.settings-group>:is(.profile-settings,.shuffle-settings,.tmdb-settings-block) { margin-bottom:0; border-bottom:0; }
+.settings-group>.setting-row:last-child { border-bottom:0; }
+.settings-group>.setting-row:first-of-type { padding-top:0; }
+.settings-group .personalization-settings { margin-top:24px; padding-top:20px; border-top:1px solid var(--ui-separator); }
+.settings-group .personalization-material:last-child { margin-bottom:8px; }
+.settings-group .season-settings { margin-top:24px; padding-top:20px; border-top:1px solid var(--ui-separator); }
+.settings-group .tmdb-attribution { margin-top:16px; }
+@media (max-width:600px) {
+ .settings-jump-nav { gap:8px 14px; }
+ .settings-group { padding-top:24px; }
+ .settings-group>.setting-row { flex-wrap:wrap; gap:12px; }
+}
+@media (forced-colors:active) {
+ .settings-jump-nav,.settings-group { border-color:CanvasText; }
+ .settings-group>h2 { color:CanvasText; }
+ .settings-jump-nav a { color:LinkText; }
+}

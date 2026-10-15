@@ -1,0 +1,15 @@
+/* Storage UI uses existing Fluent colors and keyboard focus rules. */
+.storage-starting .app,.storage-starting .sidebar { visibility:hidden; }
+.storage-startup { position:fixed;z-index:200;inset:10vh max(16px,calc((100vw - 640px)/2)) auto;padding:28px;background:var(--ui-surface,#fff);color:var(--ui-text,#202630);border:1px solid var(--ui-separator,#bcc8d8);border-radius:8px;box-shadow:0 12px 40px #0002;max-height:80vh;overflow:auto; }
+.storage-startup h1 {font-size:24px;margin:0 0 16px;}
+.storage-startup p {white-space:pre-wrap;overflow-wrap:anywhere;}
+.storage-startup>div,.folder-storage-actions {display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;}
+.folder-storage-settings {margin-top:24px;border-top:1px solid var(--ui-separator);padding-top:20px;}
+.folder-storage-settings p {overflow-wrap:anywhere;}
+#folderBackupRows {display:flex;flex-direction:column;align-items:flex-start;gap:8px;}
+.storage-status {font-size:12px;max-width:300px;text-align:left;overflow-wrap:anywhere;}
+.storage-status[data-state=error] {color:var(--ui-danger,#ae3333);}
+@media(max-width:800px){.storage-status{max-width:140px;font-size:11px}.toolbar{gap:8px}}
+@media(forced-colors:active){.storage-startup,.storage-status{background:Canvas;color:CanvasText;border:1px solid CanvasText;box-shadow:none}}
+
+.storage-transfer {position:fixed;inset:0;z-index:250;display:grid;place-content:center;background:var(--ui-surface,#fff);color:var(--ui-text,#202733);font-size:18px;padding:24px;text-align:center;}

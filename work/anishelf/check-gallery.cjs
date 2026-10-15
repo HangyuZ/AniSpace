@@ -1,0 +1,15 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');let core=fs.readFileSync('check.cjs','utf8');core=core.slice(0,core.indexOf('const a=boot();'))+'\nglobalThis.harness=boot();';const ctx={require,console,Blob,URL,AbortController,structuredClone};vm.createContext(ctx);vm.runInContext(core,ctx);const h=ctx.harness;
+const base={id:701,title:'Alpha',en:'Alpha',genre:'动画',episodes:12,progress:0,status:'planned',rating:0,year:2026,image:'https://image.tmdb.org/t/p/w342/poster.jpg',startDate:'2026-10-01'};
+const track=h.get('#galleryTrack');track.scrollLeft=0;track.clientWidth=620;track.scrollWidth=940;
+const cards=Array.from({length:3},(_,i)=>({offsetLeft:i*320,offsetWidth:300,dataset:{galleryIndex:String(i)},querySelector:()=>({focus(){}})}));track.querySelectorAll=()=>cards;track.scrollTo=options=>{track.scrollLeft=Math.min(320,options.left);track.onscroll?.();};
+let observed=0,disconnected=0;h.context.ResizeObserver=class{observe(){observed++}disconnect(){disconnected++}};
+h.run('library='+JSON.stringify([base,{...base,id:702,title:'Beta',favorite:true},{...base,id:703,title:'Gamma',status:'completed',progress:12,finishDate:'2026-10-12'}])+';view="gallery";render()');
+assert.equal(h.get('#animeGrid').className,'gallery-host');assert.match(h.get('#animeGrid').innerHTML,/gallery-dates/);assert.match(h.get('#animeGrid').innerHTML,/w780\/poster.jpg/);assert.match(h.get('#animeGrid').innerHTML,/gallery-favorite is-favorite/);assert.equal(h.get('#galleryViewButton').hidden,false);assert.equal(h.get('#galleryPrevious').disabled,true);assert.equal(observed,1);
+h.get('#galleryNext').onclick();assert.equal(track.scrollLeft,320);assert.equal(h.get('#galleryNext').disabled,true);h.get('#galleryPrevious').onclick();assert.equal(track.scrollLeft,0);
+let prevented=false;track.onkeydown({key:'ArrowRight',target:{closest:()=>null},preventDefault(){prevented=true}});assert.equal(prevented,true);assert.equal(track.scrollLeft,320);
+h.run('render()');assert.ok(disconnected>=1);assert.equal(track.scrollLeft,320);
+h.run('page="watching";render()');assert.equal(h.run('view'),'grid');assert.equal(h.get('#galleryViewButton').hidden,true);assert.doesNotMatch(h.get('#animeGrid').innerHTML,/library-gallery/);
+h.run('page="favorites";view="gallery";render()');assert.equal(h.run('view'),'grid');assert.equal(h.get('#galleryViewButton').hidden,true);
+h.run('globalThis.testList=AniLists.create("List");AniLists.setMembers(testList,[701]);AniLists.select(testList);view="gallery";render()');assert.equal(h.run('view'),'grid');assert.equal(h.get('#galleryViewButton').hidden,true);
+h.run('AniLists.clearSelection();page="library";library=[];view="gallery";render()');assert.match(h.get('#animeGrid').innerHTML,/暂无动漫/);assert.equal(h.get('#galleryViewButton').hidden,false);
+console.log('PASS: Library-only gallery, date/poster/favorite markup, arrows and keyboard navigation, edge disabling, retained position, observer cleanup, scope fallback and empty state. Mock DOM; browser layout not tested.');

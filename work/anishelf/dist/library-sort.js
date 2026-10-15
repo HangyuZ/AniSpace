@@ -1,0 +1,8 @@
+(function(root){const keys=['title','airDate','endDate','startDate','finishDate'];const english=new Intl.Collator('en',{numeric:true,sensitivity:'base',ignorePunctuation:true}),chinese=new Intl.Collator('zh-CN-u-co-pinyin',{numeric:true,sensitivity:'base',ignorePunctuation:true});
+function title(a){return String(a.title||'').normalize('NFKC').trim()||String(a.en||'').normalize('NFKC').trim()}
+function date(value){if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return null;const time=Date.parse(value+'T00:00:00Z');return Number.isFinite(time)&&new Date(time).toISOString().slice(0,10)===value?time:null}
+function value(a,key){if(key==='title')return title(a)||null;if(key==='startDate'&&a.status==='planned'&&!(a.progress>0))return null;if(key==='finishDate'&&a.status!=='completed')return null;if(key==='endDate'&&a.broadcastStatus&& !['Ended','Canceled','Released'].includes(a.broadcastStatus))return null;return date(a[key])}
+function compareName(a,b){const x=title(a),y=title(b),latin=s=>/^[\s\p{P}\p{N}]*[A-Za-z]/u.test(s);const ax=latin(x),by=latin(y);if(ax!==by)return ax?-1:1;return (ax?english:chinese).compare(x,y)}
+function sort(items,key='title',direction='asc'){if(!keys.includes(key))key='title';const sign=direction==='desc'?-1:1;return [...items].sort((a,b)=>{const av=value(a,key),bv=value(b,key);if(av===null&&bv===null)return compareName(a,b);if(av===null)return 1;if(bv===null)return -1;const cmp=key==='title'?compareName(a,b):av-bv;return cmp?cmp*sign:compareName(a,b)})}
+const api={sort,value,keys};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.LibrarySort=api;
+})(globalThis);

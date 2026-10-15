@@ -1,0 +1,112 @@
+/* User inputs stay separate from semantic status and accessibility tokens. */
+body[data-person-background] { background-image:linear-gradient(rgba(243,245,248,.18),rgba(243,245,248,.18)),var(--personal-background); background-size:cover; background-position:center; background-attachment:fixed; }
+body.dark[data-person-background] { background-image:linear-gradient(rgba(8,15,25,.48),rgba(8,15,25,.48)),var(--personal-background); }
+/* One stationary background layer; foreground content is never filtered. */
+body { --page-glass-rgb:243,245,248; --page-glass-blur:16px; --page-glass-alpha:.85; }
+body.dark { --page-glass-rgb:27,35,48; }
+body[data-person-page] { --page-glass-blur:var(--personal-page-blur); --page-glass-alpha:var(--personal-page-alpha); }
+/* Sidebar material has its own settings and samples only the app background. */
+body { --sidebar-glass-rgb:233,237,243; --sidebar-glass-blur:16px; --sidebar-glass-alpha:.8; }
+body.dark { --sidebar-glass-rgb:32,43,60; }
+body[data-person-sidebar] { --sidebar-glass-blur:var(--personal-sidebar-blur); --sidebar-glass-alpha:var(--personal-sidebar-alpha); }
+.app { isolation:isolate; }
+.app::before { content:""; position:fixed; inset:0 0 0 var(--sidebar-width); z-index:-1; pointer-events:none; background:var(--ui-canvas); transition:left var(--motion-standard) var(--motion-ease); }
+@supports (backdrop-filter:blur(1px)) {
+ .sidebar { background:rgba(var(--sidebar-glass-rgb),var(--sidebar-glass-alpha)); backdrop-filter:blur(var(--sidebar-glass-blur)); }
+ .app::before { background:rgba(var(--page-glass-rgb),var(--page-glass-alpha)); backdrop-filter:blur(var(--page-glass-blur)); }
+}
+body[data-person-accent] { --ui-accent:var(--personal-accent); --ui-accent-hover:var(--personal-hover); --ui-accent-pressed:var(--personal-pressed); --ui-on-accent:var(--personal-on); --ui-accent-soft:var(--personal-soft); --ui-focus-ring:var(--personal-accent); --ui-selected-hover:var(--personal-selectedHover); --ui-selected-pressed:var(--personal-selectedPressed); --frost-accent:rgba(var(--personal-rgb),.96); }
+body[data-person-control] { --frost-small-filter:blur(var(--personal-control-blur)) saturate(105%); --frost-toolbar-control:rgba(255,255,255,calc(var(--personal-control-alpha) - .08)); --frost-toolbar-panel:rgba(233,237,243,calc(var(--personal-control-alpha) - .02)); --frost-control:rgba(255,255,255,calc(var(--personal-control-alpha) + .04)); --frost-panel:rgba(233,237,243,calc(var(--personal-control-alpha) + .1)); --frost-accent:rgba(36,74,129,calc(var(--personal-control-alpha) + .08)); }
+body.dark[data-person-control] { --frost-toolbar-control:rgba(45,59,80,var(--personal-control-alpha)); --frost-toolbar-panel:rgba(45,59,80,var(--personal-control-alpha)); --frost-control:rgba(45,59,80,calc(var(--personal-control-alpha) + .14)); --frost-panel:rgba(45,59,80,calc(var(--personal-control-alpha) + .14)); --frost-accent:rgba(145,184,245,calc(var(--personal-control-alpha) + .08)); }
+body[data-person-accent][data-person-control] { --frost-accent:rgba(var(--personal-rgb),max(.96,var(--personal-control-alpha))); }
+body[data-person-flyout] { --material-sheet:rgba(250,252,255,var(--personal-flyout-alpha)); --frost-flyout-filter:blur(var(--personal-flyout-blur)) saturate(105%); }
+body.dark[data-person-flyout] { --material-sheet:rgba(36,47,64,var(--personal-flyout-alpha)); }
+body[data-person-drawer] { --personal-drawer-surface:rgba(250,252,255,var(--personal-drawer-alpha)); --frost-drawer-filter:blur(var(--personal-drawer-blur)) saturate(105%); }
+body.dark[data-person-drawer] { --personal-drawer-surface:rgba(36,47,64,var(--personal-drawer-alpha)); }
+/* Drawer defaults are independent of the flyout setting. */
+body { --drawer-sheet:rgba(250,252,255,.9); }
+body.dark { --drawer-sheet:rgba(36,47,64,.9); }
+@supports (backdrop-filter:blur(1px)) {
+ #detailDialog { --frost-drawer-surface:var(--personal-drawer-surface,var(--drawer-sheet)); background:var(--frost-drawer-surface); }
+}
+.personalization-settings { margin-top:28px; padding-top:24px; border-top:1px solid var(--ui-separator); }
+.personalization-heading,.personalization-row { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.personalization-heading { flex-wrap:wrap; }
+.personalization-settings h3 { margin:0; }.personalization-settings h4 { margin:0 0 8px; font-size:14px; }
+.personalization-settings p { color:var(--ui-text-secondary); font-size:12px; line-height:1.7; }
+.personalization-row { padding:20px 0; border-bottom:1px solid var(--ui-separator); }
+.personalization-actions { display:flex; flex-wrap:wrap; gap:8px; flex-shrink:0; }
+.personalization-settings button { border:1px solid var(--ui-separator); background:var(--material-control); padding:9px 12px; }
+.personalization-settings button:hover { background:var(--ui-control-hover); }.personalization-settings button:active { background:var(--ui-control-pressed); }
+.personalization-material { margin:24px 0; padding:20px 16px 16px; border:1px solid var(--ui-separator); border-radius:var(--radius-panel); background:var(--ui-surface); min-width:0; }
+.personalization-material h4 { font-weight:600; }.personalization-sliders { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin:16px 0; }
+.personalization-sliders label { display:block; }.personalization-sliders output { float:right; font-variant-numeric:tabular-nums; color:var(--ui-text-secondary); }
+.personalization-sliders input { display:block; width:100%; margin:14px 0; accent-color:var(--ui-accent); }
+#personalAccent { width:48px; height:38px; padding:3px; border:1px solid var(--ui-separator); background:var(--material-control); }
+@media (max-width:700px) { .personalization-row { flex-direction:column; align-items:stretch; }.personalization-sliders { grid-template-columns:1fr; gap:8px; } }
+.profile-entry { min-width:0; }
+.profile-entry .profile-avatar { margin-left:0; }
+.sidebar-collapsed .sidebar .profile-entry .profile-avatar { display:grid; }
+.profile-avatar { display:grid; place-items:center; width:32px; height:32px; flex-shrink:0; border-radius:50%; overflow:hidden; background:var(--ui-accent-soft); color:var(--ui-accent); border:1px solid var(--ui-separator); }
+.profile-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+.profile-avatar b { font-size:14px; font-weight:600; }
+.profile-avatar [hidden] { display:none; }
+.profile-entry #sidebarUsername { margin-left:0; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.profile-settings { padding:0 0 24px; margin-bottom:24px; border-bottom:1px solid var(--ui-separator); }
+.profile-settings h3 { margin-top:0; }.profile-settings p { color:var(--ui-text-secondary); font-size:12px; line-height:1.7; }
+.profile-settings-avatar,.profile-settings-actions,.profile-name-controls { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.profile-avatar-preview { width:64px; height:64px; }.profile-avatar-preview b { font-size:24px; }
+.profile-settings button { border:1px solid var(--ui-separator); background:var(--material-control); padding:9px 12px; }
+.profile-settings button:hover { background:var(--ui-control-hover); }.profile-settings button:active { background:var(--ui-control-pressed); }
+#profileNameForm { margin-top:20px; }#profileNameForm>label { display:block; margin-bottom:8px; }
+#profileUsername { flex:1 1 180px; min-width:0; padding:10px 12px; }
+#watchGreeting { overflow-wrap:anywhere; }
+#seasonDialog { width:min(860px,calc(100vw - 32px)); padding:28px; background:var(--material-sheet); border:1px solid var(--ui-separator); border-radius:var(--radius-sheet); box-shadow:var(--material-sheet-shadow); }
+#seasonDialog::backdrop { background:var(--material-scrim); }
+#seasonRows { display:grid; gap:14px; margin:20px 0; }
+.season-choice { padding:12px; border:1px solid var(--ui-separator); border-radius:var(--radius-panel); }
+.season-choice-heading { display:flex; align-items:center; gap:12px; }.season-choice-heading img { width:52px; height:78px; object-fit:cover; border-radius:4px; }.season-choice-heading small { display:block; color:var(--ui-text-secondary); margin-top:8px; }
+.season-tracking-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:12px; }.season-tracking-fields label { display:grid; gap:6px; font-size:12px; }.season-tracking-fields :is(input,select),#seasonManualCounts { min-width:0; width:100%; padding:8px; border:1px solid var(--ui-separator); border-radius:var(--radius-control); background:var(--material-control); color:var(--ui-text); }
+#seasonConfirmRow label { display:flex; align-items:flex-start; gap:8px; margin:14px 0; font-size:12px; line-height:1.6; }#seasonDialog input[type="checkbox"] { accent-color:var(--ui-accent); flex-shrink:0; }
+.season-settings { margin-top:28px; padding-top:20px; border-top:1px solid var(--ui-separator); }.season-settings p,#seasonDialogHelp { color:var(--ui-text-secondary); line-height:1.7; }.season-legacy-row { display:flex; align-items:center; justify-content:space-between; gap:16px; margin:14px 0; }.season-legacy-row strong { overflow-wrap:anywhere; }
+.season-settings button,.season-relations button,#seasonManualApply { padding:8px 12px; border:1px solid var(--ui-separator); background:var(--material-sheet); margin:4px; }.detail-season-title { font-size:16px; font-weight:600; }.season-relations details p { white-space:pre-wrap; overflow-wrap:anywhere; }
+@supports (backdrop-filter:blur(1px)) { #seasonDialog { backdrop-filter:var(--frost-flyout-filter); } }
+@media (max-width:650px) { .season-tracking-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }.season-legacy-row { flex-wrap:wrap; } }
+#seriesMergeDialog { width:min(720px,calc(100vw - 32px)); padding:28px; border:1px solid var(--ui-separator); border-radius:var(--radius-sheet); background:var(--material-sheet); box-shadow:var(--material-sheet-shadow); }
+.series-merge-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--ui-separator); }.series-merge-row small { display:block; margin-top:6px; color:var(--ui-text-secondary); }
+#seriesMergeNotes,.merged-notes { font:inherit; white-space:pre-wrap; overflow-wrap:anywhere; padding:12px; border-radius:var(--radius-field); background:var(--material-sheet); }
+.series-records button { display:block; padding:9px 12px; margin:10px 0; border:1px solid var(--ui-separator); background:var(--material-sheet); }.series-records textarea { display:block; width:100%; min-height:100px; margin-top:8px; padding:12px; color:var(--ui-text); background:var(--material-sheet); border:1px solid var(--ui-separator); border-radius:var(--radius-field); }
+@supports (backdrop-filter:blur(1px)) { #seriesMergeDialog,.merged-notes { backdrop-filter:var(--frost-flyout-filter); } }
+/* Input/readout surfaces share the flyout material; never filter their text. */
+@supports (backdrop-filter:blur(1px)) {
+ :is(.personalization-material,.detail-overview,#shuffleOverview,#detailDialog .tracking-status,#detailDialog .watch-site-editor,#detailDialog .rewatch-editor),
+ #detailDialog :is(input,select,textarea):not([type="checkbox"]):not([type="range"]):not(:disabled),
+ .settings-panel :is(input,select,textarea):not([type="checkbox"]):not([type="range"]):not([type="color"]):not(:disabled) {
+  --frost-control-surface:var(--material-sheet); --frost-panel-surface:var(--material-sheet);
+  background:var(--material-sheet); backdrop-filter:var(--frost-flyout-filter);
+ }
+ /* A frosted editor already blurs its background; its child fields need no second blur. */
+ #detailDialog :is(.watch-site-editor,.rewatch-editor) :is(input,select,textarea) { backdrop-filter:none; }
+}
+@media (prefers-reduced-transparency:reduce), (prefers-contrast:more) {
+ .sidebar { background:var(--material-sidebar); backdrop-filter:none; }
+ .app::before { background:var(--ui-canvas); backdrop-filter:none; }
+ body[data-person-background] { background-image:none; }
+ body[data-person-accent] { --frost-accent:var(--ui-accent); }
+ body[data-person-control],body.dark[data-person-control],body[data-person-accent][data-person-control] { --frost-control:var(--ui-surface); --frost-panel:var(--ui-surface-secondary); --frost-toolbar-control:var(--ui-surface); --frost-toolbar-panel:var(--ui-surface-secondary); --frost-accent:var(--ui-accent); --frost-small-filter:none; }
+ body[data-person-flyout],body.dark[data-person-flyout] { --material-sheet:var(--ui-surface); --frost-flyout-filter:none; }
+ body,body.dark,body[data-person-drawer],body.dark[data-person-drawer] { --drawer-sheet:var(--ui-surface); --personal-drawer-surface:var(--ui-surface); --frost-drawer-filter:none; }
+}
+@media (forced-colors:active) {
+ .sidebar { background:Canvas; backdrop-filter:none; }
+ #detailDialog :is(input,select,textarea):not([type="checkbox"]):not([type="range"]):not(:disabled),
+ .settings-panel :is(input,select,textarea):not([type="checkbox"]):not([type="range"]):not([type="color"]):not(:disabled) { background:Field; color:FieldText; backdrop-filter:none; }
+ .app::before { background:Canvas; backdrop-filter:none; }
+ body[data-person-background] { background-image:none; }
+ body[data-person-accent] { --ui-accent:Highlight; --ui-accent-hover:Highlight; --ui-accent-pressed:Highlight; --ui-on-accent:HighlightText; --ui-accent-soft:Canvas; --ui-focus-ring:Highlight; --ui-selected-hover:Highlight; --ui-selected-pressed:Highlight; --frost-accent:ButtonFace; }
+ body[data-person-control],body.dark[data-person-control],body[data-person-accent][data-person-control] { --frost-control:ButtonFace; --frost-panel:Canvas; --frost-toolbar-control:ButtonFace; --frost-toolbar-panel:Canvas; --frost-accent:ButtonFace; --frost-small-filter:none; }
+ body[data-person-flyout],body.dark[data-person-flyout] { --material-sheet:Canvas; --frost-flyout-filter:none; }
+ body,body.dark,body[data-person-drawer],body.dark[data-person-drawer] { --drawer-sheet:Canvas; --personal-drawer-surface:Canvas; --frost-drawer-filter:none; }
+ .personalization-material,.personalization-settings button,#personalAccent,.profile-avatar,.profile-settings button { background:Canvas; color:CanvasText; border-color:CanvasText; }
+}
+@media (prefers-reduced-motion:reduce) { .app::before { transition:none; } }
